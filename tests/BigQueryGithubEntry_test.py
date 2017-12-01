@@ -1,4 +1,4 @@
-from ..core.bigquery.BigQueryGithubEntry import BigQueryGithubEntry
+from odyssey.core.bigquery.BigQueryGithubEntry import BigQueryGithubEntry
 
 def BigQueryGithubEntryMock(code=None):
 	_id = '20ca0f85fed03ad533611575b32a133fbbb44a76'

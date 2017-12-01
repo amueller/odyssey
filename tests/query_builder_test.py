@@ -1,5 +1,5 @@
 import unittest
-from ..util.query_builder import *
+from odyssey.utils.query_builder import *
 
 class TestQueryBuilder(unittest.TestCase):
 

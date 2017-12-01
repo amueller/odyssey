@@ -1,6 +1,6 @@
 import unittest
-from ..core.analyzer.ImportAnalyzer import ImportAnalyzer
-from .BigQueryGithubEntryTest import BigQueryGithubEntryMock
+from odyssey.core.analyzer.ImportAnalyzer import ImportAnalyzer
+from .BigQueryGithubEntry_test import BigQueryGithubEntryMock
 
 class TestImportAnalyzer(unittest.TestCase):
 
