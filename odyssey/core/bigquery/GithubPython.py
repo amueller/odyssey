@@ -104,8 +104,12 @@ class GithubPython:
 		"""
 		entries = self.get_all(_filter)
 		ric = RepoImportCounter(self.package)
+		i = 0
 		for entry in entries:
+			if (i%1000 == 0):
+				print(i)
 			ric.parse(entry)
+			i += 1
 		return ric.get_most_common(n)
 
 	# The following functions are related to ImportAnalyzer
@@ -524,6 +528,9 @@ class GithubPython:
 		return analyzer.d
 
 	def _get_context_all(self, class_name):
+		limit_clause = ""
+		if self.limit:
+			limit_clause = "LIMIT %s" % self.limit
 		query = '''\
 		#standardSQL
 		CREATE TEMPORARY FUNCTION parsePythonFile(a STRING)
@@ -567,8 +574,8 @@ class GithubPython:
 		1,2,3
 		ORDER BY 
 		count DESC
-		'''% (class_name, class_name, connect_with_and(
+		''' % (class_name, class_name, connect_with_and(
 					self._contains_package_string_standard_sql(),
 					*self._exclude_forks_string_list_standard_sql()
-			))
+			)) + limit_clause
 		return self.run(query)

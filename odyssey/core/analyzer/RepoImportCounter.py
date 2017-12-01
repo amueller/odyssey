@@ -6,6 +6,7 @@ The module that defines RepoImportCounter.
 """
 from ..bigquery.BigQueryGithubEntry import BigQueryGithubEntry
 import parso
+from odyssey.utils.parse import parso_parse
 
 class RepoImportCounter:
     """RepoImportCounter counts how many times other repos import the analyzed package."""
@@ -42,10 +43,10 @@ class RepoImportCounter:
         if not isinstance(entry, BigQueryGithubEntry):
             print("Cannot parse non-BigQueryGithubEntry!")
         self.entry = entry
-        node = parso.parse(entry.code)
+        node = parso_parse(entry.code)
         self._dfs(node)
         if self.hasImport:
-            self.counter.update([entry.repo_name])
+            self.counter[entry.repo_name] += 1
 
     def get_most_common(self, n=None):
         """Get most common n repos.

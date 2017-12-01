@@ -6,6 +6,7 @@ The module that defines InstantiationAnalyzer.
 """
 import parso
 from collections import defaultdict
+from odyssey.utils.parse import parso_parse
 
 class InstantiationAnalyzer:
     """InstantiationAnalyzer parses the code to get the instantiation of classes."""
@@ -24,7 +25,7 @@ class InstantiationAnalyzer:
             returns an initialized InstantiationAnalyzer object.
 
         """
-        self.classs_name = class_name
+        self.class_name = class_name
         self.d = defaultdict(lambda : defaultdict(int))
         self.counter = 0
 
@@ -37,7 +38,7 @@ class InstantiationAnalyzer:
             code string to be parsed.
 
         """
-        node = parso.parse(code)
+        node = parso_parse(code)
         self._dfs(node)
     
     def _dfs(self, node):
@@ -66,7 +67,7 @@ class InstantiationAnalyzer:
             if len(node.children) >= 3:
                 val = self._getVal(node.children[2])
             else:
-                keyword = node
+                keyword = node.get_code()
             self.d[keyword][val] += 1
             self.counter += 1
 
@@ -74,4 +75,4 @@ class InstantiationAnalyzer:
         if node.type != "factor" and node.type != "atom" and node.type != "atom_expr" and node.type != "term" and node.type != "arith_expr":
             return node.value
         else:
-            return node
+            return node.get_code()

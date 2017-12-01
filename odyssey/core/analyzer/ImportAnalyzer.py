@@ -7,6 +7,7 @@ The module that defines ImportAnalyzer.
 import parso
 import operator
 from odyssey.utils import sklearn_meta_data
+from odyssey.utils.parse import parso_parse
 
 class ImportAnalyzer:
     """ImportAnalyzer analyzes how classes, submodules and functions are imported."""
@@ -44,7 +45,7 @@ class ImportAnalyzer:
 
         """
         self.entry = entry
-        node = parso.parse(entry.code)
+        node = parso_parse(entry.code)
         self._dfs(node)
 
     def get_common(self, n=None, _reverse=True):
@@ -146,7 +147,7 @@ class ImportAnalyzer:
                 return sklearn_meta_data.get_all_functions()
             elif accepted_list.upper() == "SKLEARN_SUBMODULE":
                 return sklearn_meta_data.get_all_submodules()
-            elif accepted_list.upper() == "SKLEARN_MODEL":
+            elif accepted_list.upper() == "SKLEARN_CLASS":
                 return sklearn_meta_data.get_all_models()
             else:
                 raise Exception("Do not understand %s! "%accepted_list + 

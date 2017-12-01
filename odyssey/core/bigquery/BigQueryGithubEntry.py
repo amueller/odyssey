@@ -34,7 +34,7 @@ class BigQueryGithubEntry:
 		self.id = _id
 		self.code = code
 		self.repo_name = repo_name
-		self.path = path
+		self.path = path		
 	
 	def __str__(self):
 		"""Encode the code string in utf-8 and return. For printing purpose."""
