@@ -9,7 +9,7 @@ class TestImportAnalyzer(unittest.TestCase):
 		self.assertEqual(a.package, "sklearn")
 		self.assertEqual(a.accepted_list, [])
 		b = ImportAnalyzer("sklearn", "SKLEARN_ALL")
-		# model/submodule/function all included
+		# class/submodule/function all included
 		self.assertTrue("SVC" in b.accepted_list)
 		self.assertTrue("train_test_split" in b.accepted_list)
 		self.assertTrue("tree" in b.accepted_list)

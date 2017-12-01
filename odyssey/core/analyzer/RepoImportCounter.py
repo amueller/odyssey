@@ -8,7 +8,7 @@ from ..bigquery.BigQueryGithubEntry import BigQueryGithubEntry
 import parso
 
 class RepoImportCounter:
-    """RepoImportCounter counts how many times other repos import the analyzed model."""
+    """RepoImportCounter counts how many times other repos import the analyzed package."""
     def __init__(self, package):
         """Initialize the RepoImportCounter.
         

@@ -9,7 +9,7 @@ import operator
 from odyssey.utils import sklearn_meta_data
 
 class ImportAnalyzer:
-    """ImportAnalyzer analyzes how models, submodules and functions are imported."""
+    """ImportAnalyzer analyzes how classes, submodules and functions are imported."""
     def __init__(self, package, accepted_list):
         """Initialize the ImportAnalyzer.
         

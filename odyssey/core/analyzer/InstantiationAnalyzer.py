@@ -8,14 +8,14 @@ import parso
 from collections import defaultdict
 
 class InstantiationAnalyzer:
-    """InstantiationAnalyzer parses the code to get the instantiation of models."""
-    def __init__(self, model_name):
+    """InstantiationAnalyzer parses the code to get the instantiation of classes."""
+    def __init__(self, class_name):
         """Initialize the InstantiationAnalyzer.
         
         Parameters
         ----------
-        model_name: string
-            model to be analyzed for instantiation
+        class_name: string
+            class to be analyzed for instantiation
         
         Returns
         -------
@@ -24,7 +24,7 @@ class InstantiationAnalyzer:
             returns an initialized InstantiationAnalyzer object.
 
         """
-        self.model_name = model_name
+        self.classs_name = class_name
         self.d = defaultdict(lambda : defaultdict(int))
         self.counter = 0
 
@@ -45,7 +45,7 @@ class InstantiationAnalyzer:
             for child in node.children:
                 self._dfs(child)
         else:
-            if node.value == self.model_name:
+            if node.value == self.class_name:
                 p = node.parent
                 if p.type =="atom_expr" and p.children[0] == node:
                     self._parseArg(p.children[1].children[1])

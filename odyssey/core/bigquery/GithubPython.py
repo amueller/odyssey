@@ -45,7 +45,7 @@ class GithubPython:
 		self.limit = limit
 		self.get_all = memory.cache(self.get_all)
 		self.get_count = memory.cache(self.get_count)
-		self.model_list = self.submodule_list = self.function_list = None
+		self.class_list = self.submodule_list = self.function_list = None
 
 
 	def _reset(self, package):
@@ -109,16 +109,16 @@ class GithubPython:
 		return ric.get_most_common(n)
 
 	# The following functions are related to ImportAnalyzer
-	def set_model_list(self, L):
-		"""Set model list which will be used for ImportAnalyzer to classify import.
+	def set_class_list(self, L):
+		"""Set class list which will be used for ImportAnalyzer to classify import.
 		
 		Parameters
 		----------
 		L : list of string
-			model list that should be identified by ImportAnalyzer.
+			class list that should be identified by ImportAnalyzer.
 
 		"""
-		self.model_list = L
+		self.class_list = L
 
 	def set_submodule_list(self, L):
 		"""Set submodule list which will be used for ImportAnalyzer to classify import.
@@ -154,8 +154,8 @@ class GithubPython:
 		return self._get_imported_info(n, _filter, accepted_list, ia_to_use, f)
 
 	def _get_accepted_list(self, ia_to_use):
-		if ia_to_use == "MODEL":
-			return self.model_list
+		if ia_to_use == "CLASS":
+			return self.class_list
 		elif ia_to_use == "SUBMODULE":
 			return self.submodule_list
 		elif ia_to_use == "FUNCTION":
@@ -164,17 +164,17 @@ class GithubPython:
 			print("Wrong ia_to_use value! " % ia_to_use)
 			return []
 
-	def get_most_imported_model(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
-		"""Get n most imported model within a certain use count range, subject to filter.
+	def get_most_imported_class(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
+		"""Get n most imported classes within a certain use count range, subject to filter.
 		
 		Parameters
 		----------
 		n : int or None, optional (default=None)
-			the top n most imported model to be returned. If set to None, all results will be returned.
+			the top n most imported classes to be returned. If set to None, all results will be returned.
 		use_count_less_than : int or None, optional (default=None)
-			only include models that have use count less than this amount. If none, there will be no restriction.
+			only include classes that have use count less than this amount. If none, there will be no restriction.
 		use_count_more_than : int or None, optional (default=None)
-			only include models that have use count more than this amount. If none, there will be no restriction.
+			only include classes that have use count more than this amount. If none, there will be no restriction.
 		_filter : Filter object or None (default=None)
 			Filter the result as defined in the filter object.
 
@@ -184,19 +184,19 @@ class GithubPython:
 			Returns a list of tuple (name, count)
 
 		"""
-		return self._get_most_imported_helper("MODEL", n, use_count_less_than, use_count_more_than, _filter)
+		return self._get_most_imported_helper("CLASS", n, use_count_less_than, use_count_more_than, _filter)
 
-	def get_least_imported_model(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
-		"""Get n least imported model within a certain use count range, subject to filter.
+	def get_least_imported_class(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
+		"""Get n least imported class within a certain use count range, subject to filter.
 		
 		Parameters
 		----------
 		n : int or None, optional (default=None)
-			the top n least imported model to be returned. If set to None, all results will be returned.
+			the top n least imported classes to be returned. If set to None, all results will be returned.
 		use_count_less_than : int or None, optional (default=None)
-			only include models that have use count less than this amount. If none, there will be no restriction.
+			only include classes that have use count less than this amount. If none, there will be no restriction.
 		use_count_more_than : int or None, optional (default=None)
-			only include models that have use count more than this amount. If none, there will be no restriction.
+			only include classes that have use count more than this amount. If none, there will be no restriction.
 		_filter : Filter object or None (default=None)
 			Filter the result as defined in the filter object.
 
@@ -206,7 +206,7 @@ class GithubPython:
 			Returns a list of tuple (name, count)
 
 		"""
-		return self._get_most_imported_helper("MODEL", -n, use_count_less_than, use_count_more_than, _filter)
+		return self._get_most_imported_helper("CLASS", -n, use_count_less_than, use_count_more_than, _filter)
 
 	def get_most_imported_submodule(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
 		"""Get n most imported submodule within a certain use count range, subject to filter.
@@ -214,11 +214,11 @@ class GithubPython:
 		Parameters
 		----------
 		n : int or None, optional (default=None)
-			the top n least imported model to be returned. If set to None, all results will be returned.
+			the top n least imported submodule to be returned. If set to None, all results will be returned.
 		use_count_less_than : int or None, optional (default=None)
-			only include models that have use count less than this amount. If none, there will be no restriction.
+			only include submodules that have use count less than this amount. If none, there will be no restriction.
 		use_count_more_than : int or None, optional (default=None)
-			only include models that have use count more than this amount. If none, there will be no restriction.
+			only include submodules that have use count more than this amount. If none, there will be no restriction.
 		_filter : Filter object or None (default=None)
 			Filter the result as defined in the filter object.
 	
@@ -236,11 +236,11 @@ class GithubPython:
 		Parameters
 		----------
 		n : int or None, optional (default=None)
-			the top n least imported model to be returned. If set to None, all results will be returned.
+			the top n least imported submodule to be returned. If set to None, all results will be returned.
 		use_count_less_than : int or None, optional (default=None)
-			only include models that have use count less than this amount. If none, there will be no restriction.
+			only include submodules that have use count less than this amount. If none, there will be no restriction.
 		use_count_more_than : int or None, optional (default=None)
-			only include models that have use count more than this amount. If none, there will be no restriction.
+			only include submodules that have use count more than this amount. If none, there will be no restriction.
 		_filter : Filter object or None (default=None)
 			Filter the result as defined in the filter object.
 
@@ -258,11 +258,11 @@ class GithubPython:
 		Parameters
 		----------
 		n : int or None, optional (default=None)
-			the top n least imported model to be returned. If set to None, all results will be returned.
+			the top n least imported function to be returned. If set to None, all results will be returned.
 		use_count_less_than : int or None, optional (default=None)
-			only include models that have use count less than this amount. If none, there will be no restriction.
+			only include functions that have use count less than this amount. If none, there will be no restriction.
 		use_count_more_than : int or None, optional (default=None)
-			only include models that have use count more than this amount. If none, there will be no restriction.
+			only include functions that have use count more than this amount. If none, there will be no restriction.
 		_filter : Filter object or None (default=None)
 			Filter the result as defined in the filter object.
 
@@ -280,11 +280,11 @@ class GithubPython:
 		Parameters
 		----------
 		n : int or None, optional (default=None)
-			the top n least imported model to be returned. If set to None, all results will be returned.
+			the top n least imported function to be returned. If set to None, all results will be returned.
 		use_count_less_than : int or None, optional (default=None)
-			only include models that have use count less than this amount. If none, there will be no restriction.
+			only include functions that have use count less than this amount. If none, there will be no restriction.
 		use_count_more_than : int or None, optional (default=None)
-			only include models that have use count more than this amount. If none, there will be no restriction.
+			only include functions that have use count more than this amount. If none, there will be no restriction.
 		_filter : Filter object or None (default=None)
 			Filter the result as defined in the filter object.
 
@@ -301,7 +301,7 @@ class GithubPython:
 		entries = self.get_all(_filter)
 		for entry in entries:
 			ia.parse(entry)
-		if ia_to_use == "MODEL":
+		if ia_to_use == "CLASS":
 			self.ia_class = ia
 		elif ia_to_use == "SUBMODULE":
 			self.ia_submodule = ia
@@ -317,18 +317,12 @@ class GithubPython:
 			return ia.get_least_common(-n)
 
 	def get_import_source(self, val):
-		"""
+		"""Returns a list of BigQueryGithubEntry that imported val.
 		
 		Parameters
 		----------
-		n : int or None, optional (default=None)
-			the top n least imported model to be returned. If set to None, all results will be returned.
-		use_count_less_than : int or None, optional (default=None)
-			only include models that have use count less than this amount. If none, there will be no restriction.
-		use_count_more_than : int or None, optional (default=None)
-			only include models that have use count more than this amount. If none, there will be no restriction.
-		_filter : Filter object or None (default=None)
-			Filter the result as defined in the filter object.
+		val : string
+			The class/submodule/function to examine sources file on
 	
 		Returns
 		-------
@@ -492,13 +486,13 @@ class GithubPython:
 			for repo_name in res]
 		return excluded_repos
 
-	def get_context(self, model_name):
-		"""Get context for model usage.
+	def get_context(self, class_name):
+		"""Get context for class usage.
 		
 		Parameters
 		----------
-		model_name: string
-			Which model to examine context.
+		class_name: string
+			Which class to examine context.
 
 		Returns
 		-------
@@ -506,15 +500,15 @@ class GithubPython:
 			Returns a list of tuple of (context_string, path, repo_name, count).
 
 		"""
-		return self._get_context_all(model_name)
+		return self._get_context_all(class_name)
 
-	def get_instantiation(self, model_name):
-		"""Get instantiation information for model usage.
+	def get_instantiation(self, class_name):
+		"""Get instantiation information for class usage.
 		
 		Parameters
 		----------
-		model_name: string
-			Which model to examine instantiation.
+		class_name: string
+			Which class to examine instantiation.
 
 		Returns
 		-------
@@ -522,14 +516,14 @@ class GithubPython:
 			Returns a nested dict: dict(key=arg, value=dict(key=value_that_arg_sets_to, value=count))
 
 		"""
-		contexts = self._get_context_all(model_name)
-		analyzer = InstantiationAnalyzer(model_name)
+		contexts = self._get_context_all(class_name)
+		analyzer = InstantiationAnalyzer(class_name)
 		for i in range(1, len(contexts)):
 			code = contexts[i][0]
 			analyzer.parse(code)
 		return analyzer.d
 
-	def _get_context_all(self, model_name):
+	def _get_context_all(self, class_name):
 		query = '''\
 		#standardSQL
 		CREATE TEMPORARY FUNCTION parsePythonFile(a STRING)
@@ -546,7 +540,7 @@ class GithubPython:
 		}
 		""";
 
-		CREATE TfEMPORARY FUNCTION parsePythonFile2(a STRING, b STRING)
+		CREATE TEMPORARY FUNCTION parsePythonFile2(a STRING, b STRING)
 		RETURNS STRING
 		LANGUAGE js AS """
 		if (a === null) {
@@ -573,7 +567,7 @@ class GithubPython:
 		1,2,3
 		ORDER BY 
 		count DESC
-		'''% (model_name, model_name, connect_with_and(
+		'''% (class_name, class_name, connect_with_and(
 					self._contains_package_string_standard_sql(),
 					*self._exclude_forks_string_list_standard_sql()
 			))
