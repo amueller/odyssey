@@ -11,13 +11,11 @@
   "install": [
     "conda create --yes -n test python=$TRAVIS_PYTHON_VERSION",
     "source activate test",
-    "conda install --yes numpy scipy matplotlib pip scikit-learn",
+    "conda install --yes pip",
     "pip install setuptools",
-    "pip install pytest",
-    "pip install parso",
-    "pip install --upgrade google-cloud-bigquery",
+    "pip install -r requirements.txt",
   ],
-  "script": "pytest",
+  "script": "python -m pytest",
   "group": "stable",
   "dist": "precise",
   "os": "linux"

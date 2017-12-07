@@ -1,2 +1,6 @@
 pytest
 sphinx
+google-cloud-bigquery
+parso
+joblib
+sphinxcontrib-napoleon
