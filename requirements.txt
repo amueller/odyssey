@@ -4,3 +4,5 @@ google-cloud-bigquery
 parso
 joblib
 sphinxcontrib-napoleon
+nbsphinx
+ipython

@@ -1,6 +1,9 @@
 Welcome to Odyssey's documentation!
 ===================================
 
+.. toctree::
+   tutorial.ipynb
+
 .. automodule:: odyssey.core.bigquery.GithubPython
    :members:
    :special-members:
@@ -32,11 +35,6 @@ Welcome to Odyssey's documentation!
 .. automodule:: odyssey.utils.sklearn_meta_data
    :members:
    :special-members:
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
 
 
 Indices and tables
