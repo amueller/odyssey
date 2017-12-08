@@ -1,8 +1,8 @@
-Odyssey
-========================
-
 .. image:: https://travis-ci.org/alan97/odyssey.svg?branch=master
     :target: https://travis-ci.org/alan97/odyssey
+
+Odyssey
+========================
 
 Odyssey ⛴ is built for analyzing python library usage on GitHub through Google BigQuery.
 
