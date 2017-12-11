@@ -27,7 +27,7 @@ To install, first clone the repository and run setup.py file:
 Documentation and Tutorial
 --------------------------
 
-See `here <odyssey.readthedocs.io/>`_.
+See `here <http://odyssey.readthedocs.io/en/latest/>`_.
 
 Licence
 -------
