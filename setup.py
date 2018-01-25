@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="odyssey",
     version="0.1",
-    packages=find_packages(exclude=['joblib', 'docs', 'tests', '.cache']),
+    packages=['odyssey'],
 
     author="Alan (Yanlin) Duan",
     author_email="duanyanl97@gmail.com",
