@@ -15,8 +15,8 @@ memory = Memory(cachedir=".",verbose=0)
 class GithubPython:
 	"""Provides functionality to build SQL query, connect with BigQuery, etc."""
 
-	PY_FILE_UNIQUE = "[scikit-learn-research.pyfiles.content_py_unique]" 
-	PY_FILE_ALL = "[scikit-learn-research.pyfiles.content_py_full]"
+	PY_FILE_UNIQUE = '`Odyssey_github_sklearn.content_py_unique`'
+	PY_FILE_ALL = '`Odyssey_github_sklearn.pyfiles.content_py_full`'
 
 	def __init__(self, package="", exclude_forks="auto", limit=None):
 		"""Initialize the GithubPython object.
@@ -368,7 +368,7 @@ class GithubPython:
 		"""
 		self.limit = limit
 
-	def run(self, query, project="stellar-arcadia-173703"):
+	def run(self, query, project="odyssey-193217"):
 		"""Run SQL query with Google BigQuery. Allow large results. Timeout set to 99999999.
 		
 		Parameters
@@ -376,7 +376,7 @@ class GithubPython:
 		query: string
 			SQL query to be executed.
 
-		project: string, optional (default="stellar-arcadia-173703")
+		project: string, optional (default="odyssey-193217")
 			Project to run the query on (for billing, logging, etc. purpose)
 
 		Returns
@@ -386,12 +386,13 @@ class GithubPython:
 
 		"""
 		from google.cloud import bigquery
+		job_config = bigquery.QueryJobConfig()
 		client = bigquery.Client(project=project)
-		result = client.run_sync_query(query)
-		result.allow_large_results = True
-		result.timeout_ms = 99999999
-		result.run()
-		return list(result.fetch_data())
+		result = client.query(query,job_config=job_config)
+		job_config.allowLargeResults = True
+		result.__done_timeout = 99999999
+		result.result()
+		return list(result)
 
 	def _get_query(self, select, _filter=None):
 		where_clause = ""
