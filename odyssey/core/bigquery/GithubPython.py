@@ -448,7 +448,7 @@ class GithubPython:
 
 		all_forks = """\
 		SELECT
-			UNIQUE(repo_name)
+			DISTINCT(repo_name)
 		FROM
 			%s
 		WHERE
@@ -478,7 +478,7 @@ class GithubPython:
 
 		all_forks = """\
 		SELECT
-			UNIQUE(repo_name)
+			DISTINCT(repo_name)
 		FROM
 			%s
 		WHERE
