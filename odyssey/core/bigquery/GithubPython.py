@@ -16,7 +16,7 @@ class GithubPython:
 	"""Provides functionality to build SQL query, connect with BigQuery, etc."""
 
 	PY_FILE_UNIQUE = '`Odyssey_github_sklearn.content_py_unique`'
-	PY_FILE_ALL = '`Odyssey_github_sklearn.pyfiles.content_py_full`'
+	PY_FILE_ALL = '`Odyssey_github_sklearn.content_py_full`'
 
 	def __init__(self, package="", exclude_forks="auto", limit=None):
 		"""Initialize the GithubPython object.
@@ -447,8 +447,7 @@ class GithubPython:
 			string_builder.append('REGEX_CONTAINS(repo_name,"%s")' % keyword)
 
 		all_forks = """\
-		SELECT
-			DISTINCT(repo_name)
+		SELECT DISTINCT(repo_name)
 		FROM
 			%s
 		WHERE
@@ -456,7 +455,7 @@ class GithubPython:
 		""" % (GithubPython.PY_FILE_ALL, connect_with_or(*string_builder))
 
 		res = self.run(all_forks)
-		excluded_repos = ['NOT REGEX_CONTAINS(repo_name, "%s")' % repo_name[0]  for repo_name in res]
+		excluded_repos = ['NOT REGEXP_CONTAINS(repo_name, "%s")' % repo_name[0]  for repo_name in res ]
 		return excluded_repos
 
 	def _exclude_forks_string_list_standard_sql(self):
