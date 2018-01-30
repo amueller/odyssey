@@ -408,7 +408,7 @@ class GithubPython:
 		if self.limit:
 			limit_clause = "LIMIT %s" % self.limit
 
-		query = """\
+		query = """
 		SELECT
 			%s
 		FROM
@@ -446,7 +446,7 @@ class GithubPython:
 			string_builder.append('REGEXP_CONTAINS(path,"%s")' % keyword)
 			string_builder.append('REGEXP_CONTAINS(repo_name,"%s")' % keyword)
 
-		all_forks = """\
+		all_forks = """
 		SELECT DISTINCT(repo_name)
 		FROM
 			%s
@@ -474,7 +474,7 @@ class GithubPython:
 			string_builder.append('path CONTAINS "%s"' % keyword)
 			string_builder.append('repo_name CONTAINS "%s"' % keyword)
 
-		all_forks = """\
+		all_forks = """
 		SELECT
 			DISTINCT(repo_name)
 		FROM
@@ -529,7 +529,7 @@ class GithubPython:
 		limit_clause = ""
 		if self.limit:
 			limit_clause = "LIMIT %s" % self.limit
-		query = '''\
+		query = '''
 		#standardSQL
 		CREATE TEMPORARY FUNCTION parsePythonFile(a STRING)
 		RETURNS STRING
