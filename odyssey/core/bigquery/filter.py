@@ -32,7 +32,7 @@ class Contains(Filter):
 
 	def __str__(self):
 		"""String representation of the filter. Also the string that will appear in SQL query"""
-		return "content CONTAINS '%s'" %self.s
+		return "REGEXP_CONTAINS(content,'%s')" %self.s
 
 class And(Filter):
 	"""And filter takes in two filters and requires both to be true."""
