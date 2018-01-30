@@ -443,8 +443,8 @@ class GithubPython:
 		
 		string_builder = []
 		for keyword in exclude_list:
-			string_builder.append('REGEX_CONTAINS(path,"%s")' % keyword)
-			string_builder.append('REGEX_CONTAINS(repo_name,"%s")' % keyword)
+			string_builder.append('REGEXP_CONTAINS(path,"%s")' % keyword)
+			string_builder.append('REGEXP_CONTAINS(repo_name,"%s")' % keyword)
 
 		all_forks = """\
 		SELECT DISTINCT(repo_name)
