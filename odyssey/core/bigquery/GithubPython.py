@@ -391,7 +391,6 @@ class GithubPython:
 		result = client.query(query,job_config=job_config)
 		job_config.allowLargeResults = True
 		result.__done_timeout = 99999999
-		result.result()
 		return list(result)
 
 	def _get_query(self, select, _filter=None):
