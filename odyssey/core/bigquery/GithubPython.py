@@ -446,16 +446,17 @@ class GithubPython:
 			string_builder.append('REGEXP_CONTAINS(path,"%s")' % keyword)
 			string_builder.append('REGEXP_CONTAINS(repo_name,"%s")' % keyword)
 
-		all_forks = """
+		all_forks = '''
 		SELECT DISTINCT(repo_name)
+	
 		FROM
 			%s
 		WHERE
 			%s
-		""" % (GithubPython.PY_FILE_ALL, connect_with_or(*string_builder))
+		''' % (GithubPython.PY_FILE_ALL, connect_with_or(*string_builder))
 
 		res = self.run(all_forks)
-		excluded_repos = ['NOT REGEXP_CONTAINS(repo_name, "%s")' % repo_name[0]  for repo_name in res ]
+		excluded_repos =[ 'NOT REGEXP_CONTAINS(repo_name, "%s")' % repo_name[0]  for repo_name in res ]
 		return excluded_repos
 
 	def _exclude_forks_string_list_standard_sql(self):
@@ -474,14 +475,14 @@ class GithubPython:
 			string_builder.append('path CONTAINS "%s"' % keyword)
 			string_builder.append('repo_name CONTAINS "%s"' % keyword)
 
-		all_forks = """
+		all_forks = '''
 		SELECT
 			DISTINCT(repo_name)
 		FROM
 			%s
 		WHERE
 			%s
-		""" % (GithubPython.PY_FILE_ALL, connect_with_or(*string_builder))
+		''' % (GithubPython.PY_FILE_ALL, connect_with_or(*string_builder))
 
 		res = self.run(all_forks)
 		excluded_repos = ["STRPOS(repo_name, '%s') = 0" % repo_name[0]
