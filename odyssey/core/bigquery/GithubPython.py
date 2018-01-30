@@ -425,7 +425,7 @@ class GithubPython:
 		return self._get_query("count(*)", _filter)
 
 	def _contains_package_string(self):
-		return 'content CONTAINS "%s"' % self.package
+		return 'REGEXP_CONTAINS(content,"%s")' % self.package
 
 	def _contains_package_string_standard_sql(self):
 		return "NOT(STRPOS(content, '%s') = 0)" % self.package
@@ -472,8 +472,8 @@ class GithubPython:
 		
 		string_builder = []
 		for keyword in exclude_list:
-			string_builder.append('path CONTAINS "%s"' % keyword)
-			string_builder.append('repo_name CONTAINS "%s"' % keyword)
+			string_builder.append('REGEXP_CONTAINS(path,"%s")' % keyword)
+			string_builder.append('REGEXP_CONTAINS(repo_name,"%s")' % keyword)
 
 		all_forks = '''
 		SELECT
