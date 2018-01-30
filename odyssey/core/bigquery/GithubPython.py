@@ -443,8 +443,8 @@ class GithubPython:
 		
 		string_builder = []
 		for keyword in exclude_list:
-			string_builder.append('path CONTAINS "%s"' % keyword)
-			string_builder.append('repo_name CONTAINS "%s"' % keyword)
+			string_builder.append('REGEX_CONTAINS(path,"%s")' % keyword)
+			string_builder.append('REGEX_CONTAINS(repo_name,"%s")' % keyword)
 
 		all_forks = """\
 		SELECT
@@ -456,8 +456,7 @@ class GithubPython:
 		""" % (GithubPython.PY_FILE_ALL, connect_with_or(*string_builder))
 
 		res = self.run(all_forks)
-		excluded_repos = ['NOT repo_name CONTAINS "%s"' % repo_name[0]
-			for repo_name in res]
+		excluded_repos = ['NOT REGEX_CONTAINS(repo_name, "%s")' % repo_name[0]  for repo_name in res]
 		return excluded_repos
 
 	def _exclude_forks_string_list_standard_sql(self):
