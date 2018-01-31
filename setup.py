@@ -10,5 +10,5 @@ setup(
     description="Tools for analyzing python package usage on GitHub through Google BigQuery",
     license="MIT",
     keywords="package usage analysis BigQuery GitHub",
-    url="https://github.com/aishgrt1/odyssey",
+    url="https://github.com/aishgrt1/odyssey/odyssey",
 )
