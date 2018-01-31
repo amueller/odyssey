@@ -566,7 +566,7 @@ class GithubPython:
 		parsePythonFile2(content,repo_name) repo_name,
 		count(*) count
 		FROM   
-		`scikit-learn-research.pyfiles.content_py_unique` 
+		`Odyssey_github_sklearn.content_py_unique` 
 		WHERE
 		 %s
 		GROUP BY
