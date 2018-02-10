@@ -20,6 +20,6 @@ class TestGithubPython(unittest.TestCase):
 		a = GithubPython("sklearn", False)
 		self.assertTrue("content, repo_name, path" 
 			in a._get_all_query())
-		self.assertTrue('content CONTAINS "sklearn"' 
+		self.assertTrue('REGEXP_CONTAINS(content,"sklearn"')
 			in a._get_all_query())
 		self.assertTrue("count(*)" in a._get_count_query())
