@@ -18,7 +18,7 @@ class GithubPython:
 	PY_FILE_UNIQUE = '`Odyssey_github_sklearn.content_py_unique`'
 	PY_FILE_ALL = '`Odyssey_github_sklearn.content_py_full`'
 
-	def __init__(self, package="", exclude_forks="auto", limit=None):
+	def __init__(self, package="", exclude_forks="auto", limit=None, project="odyssey-193217193217"):
 		"""Initialize the GithubPython object.
 		
 		Parameters
@@ -32,6 +32,10 @@ class GithubPython:
 
 		limit : int or None
 			Limit your analysis to a certain amount of results. Usually set for billing limit or performance reason.
+
+		
+		project: string, optional (default="odyssey-193217")
+			Project to run the query on (for billing, logging, etc. purpose)
 		
 		Returns
 		-------
@@ -46,6 +50,7 @@ class GithubPython:
 		self.get_all = memory.cache(self.get_all)
 		self.get_count = memory.cache(self.get_count)
 		self.class_list = self.submodule_list = self.function_list = None
+		self.project = project
 
 
 	def _reset(self, package):
@@ -368,7 +373,7 @@ class GithubPython:
 		"""
 		self.limit = limit
 
-	def run(self, query, project="odyssey-193217"):
+	def run(self, query):
 		"""Run SQL query with Google BigQuery. Allow large results. Timeout set to 99999999.
 		
 		Parameters
@@ -376,8 +381,6 @@ class GithubPython:
 		query: string
 			SQL query to be executed.
 
-		project: string, optional (default="odyssey-193217")
-			Project to run the query on (for billing, logging, etc. purpose)
 
 		Returns
 		-------
@@ -387,7 +390,7 @@ class GithubPython:
 		"""
 		from google.cloud import bigquery
 		job_config = bigquery.QueryJobConfig()
-		client = bigquery.Client(project=project)
+		client = bigquery.Client(project=self.project)
 		result = client.query(query,job_config=job_config)
 		job_config.allowLargeResults = True
 		result.__done_timeout = 99999999
