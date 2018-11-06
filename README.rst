@@ -24,6 +24,13 @@ To install, first clone the repository and run setup.py file:
     $ cd odyssey
     $ python setup.py install
 
+
+Using BigQuery
+--------------
+You need to have a google bigquery account and `create a service account key <https://cloud.google.com/docs/authentication/getting-started#creating_a_service_account>`_.
+Then, set the ``GOOGLE_APPLICATION_CREDENTIALS`` environment variable to point to the json file containing the key.
+When instantiating ``GithubPython`` you need to specify your google cloud project by name.
+
 Documentation and Tutorial
 --------------------------
 
