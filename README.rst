@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/alan97/odyssey.svg?branch=master
-    :target: https://travis-ci.org/alan97/odyssey
+.. image:: https://travis-ci.org/amueller/odyssey.svg?branch=master
+    :target: https://travis-ci.org/amueller/odyssey
 
 Odyssey
 ========================
@@ -20,7 +20,7 @@ To install, first clone the repository and run setup.py file:
 
 .. code-block::
 
-    $ git clone https://github.com/aishgrt1/odyssey
+    $ git clone https://github.com/amueller/odyssey
     $ cd odyssey
     $ python setup.py install
 
