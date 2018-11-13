@@ -1,6 +1,7 @@
 import unittest
 from odyssey.core.bigquery.GithubPython import GithubPython
 
+
 class TestGithubPython(unittest.TestCase):
 
 	def test_instantiation(self):
@@ -13,12 +14,12 @@ class TestGithubPython(unittest.TestCase):
 
 	def test_build_exclude_repo_string(self):
 		a = GithubPython("sklearn")
-		self.assertEqual(a._contains_package_string(), 
-			'REGEXP_CONTAINS(content, "sklearn"'))
+		self.assertEqual(a._contains_package_string(),
+			'REGEXP_CONTAINS(content, "sklearn")')
 
 	def test_get_query(self):
 		a = GithubPython("sklearn", False)
-		self.assertTrue("content, repo_name, path" 
+		self.assertTrue("content, repo_name, path"
 			in a._get_all_query())
 		self.assertTrue('REGEXP_CONTAINS(content,"sklearn"')
 			in a._get_all_query())
