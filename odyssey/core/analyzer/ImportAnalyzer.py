@@ -9,11 +9,13 @@ import operator
 from odyssey.utils import sklearn_meta_data
 from odyssey.utils.parse import parso_parse
 
+
 class ImportAnalyzer:
     """ImportAnalyzer analyzes how classes, submodules and functions are imported."""
+
     def __init__(self, package, accepted_list):
         """Initialize the ImportAnalyzer.
-        
+
         Parameters
         ----------
         package: string
@@ -21,7 +23,7 @@ class ImportAnalyzer:
 
         accepted_list : string
             A list of tokens that will be extracted out and counted.
-        
+
         Returns
         -------
 
@@ -37,7 +39,7 @@ class ImportAnalyzer:
 
     def parse(self, entry):
         """Parse a BigQueryGithubEntry for import analysis.
-        
+
         Parameters
         ----------
         entry: BigQueryGithubEntry
@@ -50,7 +52,7 @@ class ImportAnalyzer:
 
     def get_common(self, n=None, _reverse=True):
         """Get common imported values.
-        
+
         Parameters
         ----------
         n : int or None, optional (default=None)
@@ -72,7 +74,7 @@ class ImportAnalyzer:
 
     def get_source(self, s):
         """Get the source entries for a specific value
-        
+
         Parameters
         ----------
         s : string
@@ -88,7 +90,7 @@ class ImportAnalyzer:
 
     def get_most_common(self, n=None):
         """Get most common n imported values.
-        
+
         Parameters
         ----------
         n : int or None, optional (default=None)
@@ -104,7 +106,7 @@ class ImportAnalyzer:
 
     def get_least_common(self, n=None):
         """Get least common n imported values.
-        
+
         Parameters
         ----------
         n : int or None, optional (default=None)
@@ -120,7 +122,7 @@ class ImportAnalyzer:
 
     def get_by_filter(self, f):
         """Get imported values, filtered by f.
-        
+
         Parameters
         ----------
         f : function
@@ -133,14 +135,14 @@ class ImportAnalyzer:
 
         """
         return filter(f, self.get_most_common())
-    
+
     def _entry_list_to_count(self):
-        return {k:len(v) for k,v in self.counter.items()}
+        return {k: len(v) for k, v in self.counter.items()}
 
     def _get_default_accepted_list(self, accepted_list):
         if type(accepted_list) is str:
             if accepted_list.upper() == "SKLEARN_ALL":
-                return (sklearn_meta_data.get_all_functions() + 
+                return (sklearn_meta_data.get_all_functions() +
                         sklearn_meta_data.get_all_submodules() +
                         sklearn_meta_data.get_all_models())
             elif accepted_list.upper() == "SKLEARN_FUNCTION":
@@ -150,11 +152,11 @@ class ImportAnalyzer:
             elif accepted_list.upper() == "SKLEARN_CLASS":
                 return sklearn_meta_data.get_all_models()
             else:
-                raise Exception("Do not understand %s! "%accepted_list + 
-                    "Default accepted list not supported!" )
+                raise Exception("Do not understand %s! " % accepted_list +
+                                "Default accepted list not supported!")
         else:
             return accepted_list
-    
+
     def _dfs(self, node):
         if node.type == 'import_from':
             self._handle_import_from(node)
@@ -171,7 +173,7 @@ class ImportAnalyzer:
             if len(self.counter[value]) == 0 or self.counter[value][-1] != self.entry:
                 # Count by file, so do not count the same value twice
                 self.counter[value].append(self.entry)
-    
+
     def _handle_import_from(self, node):
         def get_imports(node):
             if isinstance(node.children[3], parso.python.tree.Operator) and node.children[3].value == "(":
@@ -187,7 +189,7 @@ class ImportAnalyzer:
                     self._count(dotted_name.value)
 
         if ((module.type == 'name' and module.value == self.package) or
-            (module.type == 'dotted_name' and module.children[0].value == self.package)):
+                (module.type == 'dotted_name' and module.children[0].value == self.package)):
             if imports.type == "name":
                 # Case 2: from Library import A
                 self._count(imports.value)
@@ -209,7 +211,7 @@ class ImportAnalyzer:
                     self._count(imports.children[0].value)
             else:
                 raise Exception("Unexpected import line! %r" % node)
-    
+
     def _handle_import_name(self, node):
         imports = node.children[1]
         if imports.type == 'dotted_name' and imports.children[0].type == "name" and imports.children[0].value == self.package:

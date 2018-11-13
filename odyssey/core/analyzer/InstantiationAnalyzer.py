@@ -8,16 +8,18 @@ import parso
 from collections import defaultdict
 from odyssey.utils.parse import parso_parse
 
+
 class InstantiationAnalyzer:
     """InstantiationAnalyzer parses the code to get the instantiation of classes."""
+
     def __init__(self, class_name):
         """Initialize the InstantiationAnalyzer.
-        
+
         Parameters
         ----------
         class_name: string
             class to be analyzed for instantiation
-        
+
         Returns
         -------
 
@@ -26,12 +28,12 @@ class InstantiationAnalyzer:
 
         """
         self.class_name = class_name
-        self.d = defaultdict(lambda : defaultdict(int))
+        self.d = defaultdict(lambda: defaultdict(int))
         self.counter = 0
 
-    def parse(self,code):
+    def parse(self, code):
         """Parse code and analyze for instantiation.
-        
+
         Parameters
         ----------
         code: string
@@ -40,7 +42,7 @@ class InstantiationAnalyzer:
         """
         node = parso_parse(code)
         self._dfs(node)
-    
+
     def _dfs(self, node):
         if hasattr(node, 'children'):
             for child in node.children:
@@ -48,10 +50,10 @@ class InstantiationAnalyzer:
         else:
             if node.value == self.class_name:
                 p = node.parent
-                if p.type =="atom_expr" and p.children[0] == node:
+                if p.type == "atom_expr" and p.children[0] == node:
                     self._parseArg(p.children[1].children[1])
 
-    def _parseArg(self,node):
+    def _parseArg(self, node):
         if node.type == "arglist":
             for child in node.children:
                 if child.type == "argument":
@@ -61,7 +63,7 @@ class InstantiationAnalyzer:
                         val = self._getVal(child.children[2])
                     self.d[keyword][val] += 1
                     self.counter += 1
-        elif node.type == "argument":        
+        elif node.type == "argument":
             keyword = self._getVal(node.children[0])
             val = None
             if len(node.children) >= 3:

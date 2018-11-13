@@ -8,16 +8,18 @@ from ..bigquery.BigQueryGithubEntry import BigQueryGithubEntry
 import parso
 from odyssey.utils.parse import parso_parse
 
+
 class RepoImportCounter:
     """RepoImportCounter counts how many times other repos import the analyzed package."""
+
     def __init__(self, package):
         """Initialize the RepoImportCounter.
-        
+
         Parameters
         ----------
         package: string
             Python package to be counted
-        
+
         Returns
         -------
 
@@ -30,10 +32,10 @@ class RepoImportCounter:
         self.counter = Counter()
         self.entry = None
         self.hasImport = False
-    
+
     def parse(self, entry):
         """Parse a BigQueryGithubEntry for repo import count.
-        
+
         Parameters
         ----------
         entry: BigQueryGithubEntry
@@ -50,7 +52,7 @@ class RepoImportCounter:
 
     def get_most_common(self, n=None):
         """Get most common n repos.
-        
+
         Parameters
         ----------
         n : int or None, optional (default=None)
@@ -65,7 +67,7 @@ class RepoImportCounter:
         if n is None:
             return self.counter.most_common(len(self.counter))
         return self.counter.most_common(n)
-    
+
     def _dfs(self, node):
         if self.hasImport:
             return
@@ -100,7 +102,7 @@ class RepoImportCounter:
                     self._count(dotted_name.value)
 
         if ((module.type == 'name' and module.value == self.package) or
-            (module.type == 'dotted_name' and module.children[0].value == self.package)):
+                (module.type == 'dotted_name' and module.children[0].value == self.package)):
             if imports.type == "name":
                 # Case 2: from Library import A
                 self._count(imports.value)
@@ -122,7 +124,7 @@ class RepoImportCounter:
                     self._count(imports.children[0].value)
             else:
                 raise Exception("Unexpected import line! %r" % node)
-    
+
     def _handleImportName(self, node):
         if self.hasImport:
             return
