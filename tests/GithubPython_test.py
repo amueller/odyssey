@@ -15,7 +15,7 @@ class TestGithubPython(unittest.TestCase):
     def test_build_exclude_repo_string(self):
         a = GithubPython("sklearn")
         self.assertEqual(a._contains_package_string(),
-                         'REGEXP_CONTAINS(content, "sklearn")')
+                         'REGEXP_CONTAINS(content,"sklearn")')
 
     def test_get_query(self):
         a = GithubPython("sklearn", False)
