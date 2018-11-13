@@ -423,13 +423,13 @@ list
             limit_clause = "LIMIT %s" % self.limit
 
         query = """
-		SELECT
-			%s
-		FROM
-			%s
-		%s
-		%s
-		""" % (select, self.py_files_unique, where_clause, limit_clause)
+        SELECT
+            %s
+        FROM
+            %s
+        %s
+        %s
+        """ % (select, self.py_files_unique, where_clause, limit_clause)
         return query
 
     def _get_all_query(self, _filter=None):
@@ -461,13 +461,13 @@ list
             string_builder.append('REGEXP_CONTAINS(repo_name,"%s")' % keyword)
 
         all_forks = '''
-		SELECT DISTINCT(repo_name)
-	
-		FROM
-			%s
-		WHERE
-			%s
-		''' % (self.py_files_all, connect_with_or(*string_builder))
+        SELECT DISTINCT(repo_name)
+
+        FROM
+            %s
+        WHERE
+            %s
+        ''' % (self.py_files_all, connect_with_or(*string_builder))
 
         res = self.run(all_forks)
         excluded_repos = [
@@ -491,13 +491,13 @@ list
             string_builder.append('REGEXP_CONTAINS(repo_name,"%s")' % keyword)
 
         all_forks = '''
-		SELECT
-			DISTINCT(repo_name)
-		FROM
-			%s
-		WHERE
-			%s
-		''' % (self.py_files_all, connect_with_or(*string_builder))
+        SELECT
+            DISTINCT(repo_name)
+        FROM
+            %s
+        WHERE
+            %s
+        ''' % (self.py_files_all, connect_with_or(*string_builder))
 
         res = self.run(all_forks)
         excluded_repos = ["STRPOS(repo_name, '%s') = 0" % repo_name[0]
@@ -546,49 +546,49 @@ list
         if self.limit:
             limit_clause = "LIMIT %s" % self.limit
         query = '''
-		#standardSQL
-		CREATE TEMPORARY FUNCTION parsePythonFile(a STRING)
-		RETURNS STRING
-		LANGUAGE js AS """
-		if (a === null) {
-		  return null;
-		}
-		var lines = a.split('\\\\n');
-		for (i=0;i<lines.length;i++) {
-		  if (lines[i].indexOf("%s")!==-1){
-			return a;
-		  }
-		}
-		""";
+        #standardSQL
+        CREATE TEMPORARY FUNCTION parsePythonFile(a STRING)
+        RETURNS STRING
+        LANGUAGE js AS """
+        if (a === null) {
+          return null;
+        }
+        var lines = a.split('\\\\n');
+        for (i=0;i<lines.length;i++) {
+          if (lines[i].indexOf("%s")!==-1){
+            return a;
+          }
+        }
+        """;
 
-		CREATE TEMPORARY FUNCTION parsePythonFile2(a STRING, b STRING)
-		RETURNS STRING
-		LANGUAGE js AS """
-		if (a === null) {
-		  return null;
-		}
-		var lines = a.split('\\\\n');
-		for (i=0;i<lines.length;i++) {
-		  if (lines[i].indexOf("%s")!==-1){
-			return b;
-		  }
-		}
-		""";
+        CREATE TEMPORARY FUNCTION parsePythonFile2(a STRING, b STRING)
+        RETURNS STRING
+        LANGUAGE js AS """
+        if (a === null) {
+          return null;
+        }
+        var lines = a.split('\\\\n');
+        for (i=0;i<lines.length;i++) {
+          if (lines[i].indexOf("%s")!==-1){
+            return b;
+          }
+        }
+        """;
 
-		SELECT
-		parsePythonFile(content) match,
-		parsePythonFile2(content,path) path,
-		parsePythonFile2(content,repo_name) repo_name,
-		count(*) count
-		FROM   
-		`Odyssey_github_sklearn.content_py_unique` 
-		WHERE
-		 %s
-		GROUP BY
-		1,2,3
-		ORDER BY 
-		count DESC
-		''' % (class_name, class_name, connect_with_and(
+        SELECT
+        parsePythonFile(content) match,
+        parsePythonFile2(content,path) path,
+        parsePythonFile2(content,repo_name) repo_name,
+        count(*) count
+        FROM
+        `Odyssey_github_sklearn.content_py_unique`
+        WHERE
+         %s
+        GROUP BY
+        1,2,3
+        ORDER BY
+        count DESC
+        ''' % (class_name, class_name, connect_with_and(
             self._contains_package_string_standard_sql(),
             *self._exclude_forks_string_list_standard_sql()
         )) + limit_clause

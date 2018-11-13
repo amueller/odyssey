@@ -4,7 +4,6 @@ InstantiationAnalyzer.py
 The module that defines InstantiationAnalyzer.
 
 """
-import parso
 from collections import defaultdict
 from odyssey.utils.parse import parso_parse
 
