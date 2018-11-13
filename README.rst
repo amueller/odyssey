@@ -36,6 +36,23 @@ Documentation and Tutorial
 
 See `here <http://odyssey.readthedocs.io/en/latest/>`_.
 
+Creating the database
+---------------------
+You can create the database used for scikit-learn with the following SQL command, which looks for all Python files:
+
+.. code-block::
+
+    SELECT a.id id, size, content, binary, copies,
+    repo_name, path, repos_c
+    FROM (
+    SELECT id, FIRST(repo_name) repo_name, FIRST(path) path, COUNT(UNIQUE(repo_name)) repos_c
+    FROM [bigquery-public-data:github_repos.files]
+    WHERE RIGHT(path,3)='.py'
+    GROUP BY 1
+    ) a
+    JOIN [bigquery-public-data:github_repos.contents] b
+    ON a.id=b.id
+
 Licence
 -------
 
