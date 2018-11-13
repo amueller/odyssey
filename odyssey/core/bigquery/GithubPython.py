@@ -15,10 +15,9 @@ memory = Memory(cachedir=".",verbose=0)
 class GithubPython:
 	"""Provides functionality to build SQL query, connect with BigQuery, etc."""
 
-	PY_FILE_UNIQUE = '`Odyssey_github_sklearn.content_py_unique`'
-	PY_FILE_ALL = '`Odyssey_github_sklearn.content_py_full`'
-
-	def __init__(self, package="", exclude_forks="auto", limit=None, project="odyssey-193217193217"):
+	def __init__(self, package="", exclude_forks="auto", limit=None, project="odyssey-193217193217",
+	             py_files_unique='`Odyssey_github_sklearn.content_py_unique`',
+				 py_files_all='`Odyssey_github_sklearn.content_py_full`'):
 		"""Initialize the GithubPython object.
 		
 		Parameters
@@ -34,8 +33,16 @@ class GithubPython:
 			Limit your analysis to a certain amount of results. Usually set for billing limit or performance reason.
 
 		
-		project: string, optional (default="odyssey-193217")
+		project : string, optional (default="odyssey-193217")
 			Project to run the query on (for billing, logging, etc. purpose)
+
+		py_files_unique : string
+			Dataset name for unique python files.
+
+		py_files_all : string
+			Dataset name for all python files.
+
+		
 		
 		Returns
 		-------
@@ -51,6 +58,8 @@ class GithubPython:
 		self.get_count = memory.cache(self.get_count)
 		self.class_list = self.submodule_list = self.function_list = None
 		self.project = project
+		self.py_files_all = py_files_all
+		self.py_files_unique = py_files_unique
 
 
 	def _reset(self, package):
@@ -391,7 +400,7 @@ class GithubPython:
 		from google.cloud import bigquery
 		job_config = bigquery.QueryJobConfig()
 		client = bigquery.Client(project=self.project)
-		result = client.query(query,job_config=job_config)
+		result = client.query(query, job_config=job_config)
 		job_config.allowLargeResults = True
 		result.__done_timeout = 99999999
 		return list(result)
@@ -418,7 +427,7 @@ class GithubPython:
 			%s
 		%s
 		%s
-		""" % (select, GithubPython.PY_FILE_UNIQUE, where_clause, limit_clause)
+		""" % (select, self.py_files_unique, where_clause, limit_clause)
 		return query
 
 	def _get_all_query(self, _filter=None):
@@ -456,7 +465,7 @@ class GithubPython:
 			%s
 		WHERE
 			%s
-		''' % (GithubPython.PY_FILE_ALL, connect_with_or(*string_builder))
+		''' % (self.py_files_all, connect_with_or(*string_builder))
 
 		res = self.run(all_forks)
 		excluded_repos =[ 'NOT REGEXP_CONTAINS(repo_name, "%s")' % repo_name[0]  for repo_name in res ]
@@ -485,7 +494,7 @@ class GithubPython:
 			%s
 		WHERE
 			%s
-		''' % (GithubPython.PY_FILE_ALL, connect_with_or(*string_builder))
+		''' % (self.py_files_all, connect_with_or(*string_builder))
 
 		res = self.run(all_forks)
 		excluded_repos = ["STRPOS(repo_name, '%s') = 0" % repo_name[0]
