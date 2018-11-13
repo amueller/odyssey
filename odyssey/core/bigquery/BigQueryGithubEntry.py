@@ -7,7 +7,8 @@ The module that defines BigQueryGithubEntry class.
 
 
 class BigQueryGithubEntry:
-    """A struct that contains relevant information about an entry in BigQuery Github table."""
+    """A struct that contains relevant information about an entry in BigQuery
+    Github table."""
 
     def __init__(self, _id, code, repo_name, path):
         """Initialize the BigQueryGithubEntry object.
@@ -15,7 +16,8 @@ class BigQueryGithubEntry:
         Parameters
         ----------
         _id : string
-                a hashed value representing a file entry in BigQuery Github table. This is provided in Google BigQuery Github table.
+                a hashed value representing a file entry in BigQuery Github
+                table. This is provided in Google BigQuery Github table.
 
         code : string
                 code string.
@@ -43,5 +45,7 @@ class BigQueryGithubEntry:
         return str(self.code.encode('utf-8'))
 
     def get_url(self):
-        """Returns a GitHub url linking to the file. Possibly an invalid link if the file has been removed."""
-        return "https://github.com/{}/tree/master/{}".format(self.repo_name, self.path)
+        """Returns a GitHub url linking to the file. Possibly an invalid link
+        if the file has been removed."""
+        return "https://github.com/{}/tree/master/{}".format(self.repo_name,
+                                                             self.path)

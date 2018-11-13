@@ -9,7 +9,8 @@ from odyssey.utils.parse import parso_parse
 
 
 class InstantiationAnalyzer:
-    """InstantiationAnalyzer parses the code to get the instantiation of classes."""
+    """InstantiationAnalyzer parses the code to get the instantiation of
+    classes."""
 
     def __init__(self, class_name):
         """Initialize the InstantiationAnalyzer.
@@ -73,7 +74,9 @@ class InstantiationAnalyzer:
             self.counter += 1
 
     def _getVal(self, node):
-        if node.type != "factor" and node.type != "atom" and node.type != "atom_expr" and node.type != "term" and node.type != "arith_expr":
+        if (node.type != "factor" and node.type != "atom"
+                and node.type != "atom_expr" and node.type != "term"
+                and node.type != "arith_expr"):
             return node.value
         else:
             return node.get_code()

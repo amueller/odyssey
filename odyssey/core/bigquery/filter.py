@@ -34,7 +34,8 @@ class Contains(Filter):
         self.s = s
 
     def __str__(self):
-        """String representation of the filter. Also the string that will appear in SQL query"""
+        """String representation of the filter. Also the string that will
+        appear in SQL query"""
         return "REGEXP_CONTAINS(content,'%s')" % self.s
 
 
@@ -64,7 +65,8 @@ class And(Filter):
         self.f1, self.f2 = f1, f2
 
     def __str__(self):
-        """String representation of the filter. Also the string that will appear in SQL query"""
+        """String representation of the filter. Also the string that will
+        appear in SQL query"""
         return "(%s AND %s)" % (self.f1, self.f2)
 
 
@@ -94,5 +96,6 @@ class Or(Filter):
         self.f1, self.f2 = f1, f2
 
     def __str__(self):
-        """String representation of the filter. Also the string that will appear in SQL query"""
+        """String representation of the filter. Also the string that will
+        appear in SQL query"""
         return "(%s OR %s)" % (self.f1, self.f2)

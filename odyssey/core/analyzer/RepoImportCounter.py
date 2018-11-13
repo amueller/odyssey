@@ -10,7 +10,8 @@ from odyssey.utils.parse import parso_parse
 
 
 class RepoImportCounter:
-    """RepoImportCounter counts how many times other repos import the analyzed package."""
+    """RepoImportCounter counts how many times other repos import the analyzed
+    package."""
 
     def __init__(self, package):
         """Initialize the RepoImportCounter.
@@ -56,7 +57,8 @@ class RepoImportCounter:
         Parameters
         ----------
         n : int or None, optional (default=None)
-            the name of top n repo that imports the package. If set to None, all results will be returned.
+            the name of top n repo that imports the package. If set to None,
+            all results will be returned.
 
         Returns
         -------
@@ -87,7 +89,8 @@ class RepoImportCounter:
 
     def _handleImportFrom(self, node):
         def getImports(node):
-            if isinstance(node.children[3], parso.python.tree.Operator) and node.children[3].value == "(":
+            if (isinstance(node.children[3], parso.python.tree.Operator)
+                    and node.children[3].value == "("):
                 return node.children[4]
             else:
                 return node.children[3]
@@ -95,14 +98,16 @@ class RepoImportCounter:
             return
         module = node.children[1]
         imports = getImports(node)
-        if module.type == 'dotted_name' and module.children[0].value == self.package:
+        if (module.type == 'dotted_name'
+                and module.children[0].value == self.package):
             # Case 1: from Library.B import C
             for dotted_name in module.children:
                 if dotted_name.type == 'name':
                     self._count(dotted_name.value)
 
-        if ((module.type == 'name' and module.value == self.package) or
-                (module.type == 'dotted_name' and module.children[0].value == self.package)):
+        if ((module.type == 'name' and module.value == self.package)
+                or (module.type == 'dotted_name'
+                    and module.children[0].value == self.package)):
             if imports.type == "name":
                 # Case 2: from Library import A
                 self._count(imports.value)
@@ -129,12 +134,14 @@ class RepoImportCounter:
         if self.hasImport:
             return
         imports = node.children[1]
-        if imports.type == 'dotted_name' and imports.children[0] == self.package:
+        if (imports.type == 'dotted_name'
+                and imports.children[0] == self.package):
             # Case 6: import Library.A
             for child in imports.children[1:]:
                 if child.type == "name":
                     self._count(child.value)
-        elif imports.type == 'dotted_as_name' and imports.children[0] == self.package:
+        elif (imports.type == 'dotted_as_name'
+              and imports.children[0] == self.package):
             # Case 7: import Library.A as B
             for child in imports.children[1:]:
                 if child.type == "name":

@@ -6,7 +6,8 @@ The module for using Google BigQuery on Github Data.
 """
 
 from odyssey.utils.query_builder import connect_with_and, connect_with_or
-from odyssey.core.analyzer import RepoImportCounter, ImportAnalyzer, InstantiationAnalyzer
+from odyssey.core.analyzer import (RepoImportCounter, ImportAnalyzer,
+                                   InstantiationAnalyzer)
 from odyssey.core.bigquery.BigQueryGithubEntry import BigQueryGithubEntry
 from joblib import Memory
 
@@ -14,9 +15,10 @@ memory = Memory(cachedir=".", verbose=0)
 
 
 class GithubPython:
-    """Provides functionality to build SQL query, connect with BigQuery, etc."""
+    """Provides functionality to build SQL query, connect with BigQuery, """
 
-    def __init__(self, package="", exclude_forks="auto", limit=None, project="odyssey-193217193217",
+    def __init__(self, package="", exclude_forks="auto", limit=None,
+                 project="odyssey-193217193217",
                  py_files_unique='`Odyssey_github_sklearn.content_py_unique`',
                  py_files_all='`Odyssey_github_sklearn.content_py_full`'):
         """Initialize the GithubPython object.
@@ -24,18 +26,22 @@ class GithubPython:
         Parameters
         ----------
         package : string
-                Name of python package you are interested in using Odyssey to analyze.
+                Name of python package you are interested in using Odyssey to
+                analyze.
 
         exclude_forks : string, list or tuple, optional (default="auto")
-                In SQL query, exclude both path that contains exclude_forks and repo_name that contains exclude_forks.
-                If exclude_forks is auto, it is set to a list that contains package name.
+                In SQL query, exclude both path that contains exclude_forks and
+                repo_name that contains exclude_forks.  If exclude_forks is
+                auto, it is set to a list that contains package name.
 
         limit : int or None
-                Limit your analysis to a certain amount of results. Usually set for billing limit or performance reason.
+                Limit your analysis to a certain amount of results. Usually set
+                for billing limit or performance reason.
 
 
         project : string, optional (default="odyssey-193217")
-                Project to run the query on (for billing, logging, etc. purpose)
+                Project to run the query on (for billing, logging, etc.
+                purpose)
 
         py_files_unique : string
                 Dataset name for unique python files.
@@ -63,7 +69,8 @@ class GithubPython:
         self.py_files_unique = py_files_unique
 
     def _reset(self, package):
-        """Reset package attribute and import analyzers when package is reset."""
+        """Reset package attribute and import analyzers when package is reset.
+        """
         self.package = package
         self.ia_class = ImportAnalyzer(package, [])
         self.ia_submodule = ImportAnalyzer(package, [])
@@ -84,7 +91,8 @@ list
 
         """
         res = self.run(self._get_all_query(_filter))
-        return [BigQueryGithubEntry(_id, code, repo_name, path) for _id, code, repo_name, path in res]
+        return [BigQueryGithubEntry(_id, code, repo_name, path)
+                for _id, code, repo_name, path in res]
 
     def get_count(self, _filter=None):
         """Get count of files subject to filter.
@@ -108,7 +116,8 @@ int
         Parameters
         ----------
         n : int or None, optional (default=None)
-                the top n most imported repo name to be returned. If set to None, all results will be returned.
+                the top n most imported repo name to be returned. If set to
+                None, all results will be returned.
 
         Returns
 -------
@@ -160,13 +169,15 @@ list
         """
         self.function_list = L
 
-    def _get_most_imported_helper(self, ia_to_use, n, use_count_less_than=None, use_count_more_than=None, _filter=None):
-        accepted_list = self._get_accepted_list(ia_to_use) if self._get_accepted_list(
-            ia_to_use) else self.package.upper() + '_' + ia_to_use
+    def _get_most_imported_helper(self, ia_to_use, n, use_count_less_than=None,
+                                  use_count_more_than=None, _filter=None):
+        accepted_list = (self._get_accepted_list(ia_to_use)
+                         if self._get_accepted_list(ia_to_use)
+                         else self.package.upper() + '_' + ia_to_use)
         f = None
-        if not (use_count_more_than is None) and not (use_count_less_than is None):
-            def f(
-                x): return x[1] < use_count_less_than and x[1] > use_count_more_than
+        if (not (use_count_more_than is None)
+                and not (use_count_less_than is None)):
+            def f(x): return x[1] < use_count_less_than and x[1] > use_count_more_than
         elif not (use_count_more_than is None):
             def f(x): return x[1] > use_count_more_than
         elif not (use_count_less_than is None):
@@ -184,17 +195,22 @@ list
             print("Wrong ia_to_use value! " % ia_to_use)
             return []
 
-    def get_most_imported_class(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
-        """Get n most imported classes within a certain use count range, subject to filter.
+    def get_most_imported_class(self, n=None, use_count_less_than=None,
+                                use_count_more_than=None, _filter=None):
+        """Get n most imported classes within a certain use count range,
+        subject to filter.
 
         Parameters
         ----------
         n : int or None, optional (default=None)
-                the top n most imported classes to be returned. If set to None, all results will be returned.
+                the top n most imported classes to be returned. If set to None,
+                all results will be returned.
         use_count_less_than : int or None, optional (default=None)
-                only include classes that have use count less than this amount. If none, there will be no restriction.
+                only include classes that have use count less than this amount.
+                If none, there will be no restriction.
         use_count_more_than : int or None, optional (default=None)
-                only include classes that have use count more than this amount. If none, there will be no restriction.
+                only include classes that have use count more than this amount.
+                If none, there will be no restriction.
         _filter : Filter object or None (default=None)
                 Filter the result as defined in the filter object.
 
@@ -204,19 +220,25 @@ list
                 Returns a list of tuple (name, count)
 
         """
-        return self._get_most_imported_helper("CLASS", n, use_count_less_than, use_count_more_than, _filter)
+        return self._get_most_imported_helper("CLASS", n, use_count_less_than,
+                                              use_count_more_than, _filter)
 
-    def get_least_imported_class(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
-        """Get n least imported class within a certain use count range, subject to filter.
+    def get_least_imported_class(self, n=None, use_count_less_than=None,
+                                 use_count_more_than=None, _filter=None):
+        """Get n least imported class within a certain use count range, subject
+        to filter.
 
         Parameters
         ----------
         n : int or None, optional (default=None)
-                the top n least imported classes to be returned. If set to None, all results will be returned.
+                the top n least imported classes to be returned. If set to
+                None, all results will be returned.
         use_count_less_than : int or None, optional (default=None)
-                only include classes that have use count less than this amount. If none, there will be no restriction.
+                only include classes that have use count less than this amount.
+                If none, there will be no restriction.
         use_count_more_than : int or None, optional (default=None)
-                only include classes that have use count more than this amount. If none, there will be no restriction.
+                only include classes that have use count more than this amount.
+                If none, there will be no restriction.
         _filter : Filter object or None (default=None)
                 Filter the result as defined in the filter object.
 
@@ -226,19 +248,25 @@ list
                 Returns a list of tuple (name, count)
 
         """
-        return self._get_most_imported_helper("CLASS", -n, use_count_less_than, use_count_more_than, _filter)
+        return self._get_most_imported_helper("CLASS", -n, use_count_less_than,
+                                              use_count_more_than, _filter)
 
-    def get_most_imported_submodule(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
-        """Get n most imported submodule within a certain use count range, subject to filter.
+    def get_most_imported_submodule(self, n=None, use_count_less_than=None,
+                                    use_count_more_than=None, _filter=None):
+        """Get n most imported submodule within a certain use count range,
+        subject to filter.
 
         Parameters
         ----------
         n : int or None, optional (default=None)
-                the top n least imported submodule to be returned. If set to None, all results will be returned.
+                the top n least imported submodule to be returned. If set to
+                None, all results will be returned.
         use_count_less_than : int or None, optional (default=None)
-                only include submodules that have use count less than this amount. If none, there will be no restriction.
+                only include submodules that have use count less than this
+                amount. If none, there will be no restriction.
         use_count_more_than : int or None, optional (default=None)
-                only include submodules that have use count more than this amount. If none, there will be no restriction.
+                only include submodules that have use count more than this
+                amount. If none, there will be no restriction.
         _filter : Filter object or None (default=None)
                 Filter the result as defined in the filter object.
 
@@ -248,19 +276,26 @@ list
                 Returns a list of tuple (name, count)
 
         """
-        return self._get_most_imported_helper("SUBMODULE", n, use_count_less_than, use_count_more_than, _filter)
+        return self._get_most_imported_helper("SUBMODULE", n,
+                                              use_count_less_than,
+                                              use_count_more_than, _filter)
 
-    def get_least_imported_submodule(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
-        """Get n least imported submodule within a certain use count range, subject to filter.
+    def get_least_imported_submodule(self, n=None, use_count_less_than=None,
+                                     use_count_more_than=None, _filter=None):
+        """Get n least imported submodule within a certain use count range,
+        subject to filter.
 
         Parameters
         ----------
         n : int or None, optional (default=None)
-                the top n least imported submodule to be returned. If set to None, all results will be returned.
+                the top n least imported submodule to be returned. If set to
+                None, all results will be returned.
         use_count_less_than : int or None, optional (default=None)
-                only include submodules that have use count less than this amount. If none, there will be no restriction.
+                only include submodules that have use count less than this
+                amount. If none, there will be no restriction.
         use_count_more_than : int or None, optional (default=None)
-                only include submodules that have use count more than this amount. If none, there will be no restriction.
+                only include submodules that have use count more than this
+                amount. If none, there will be no restriction.
         _filter : Filter object or None (default=None)
                 Filter the result as defined in the filter object.
 
@@ -270,19 +305,26 @@ list
                 Returns a list of tuple (name, count)
 
         """
-        return self._get_most_imported_helper("SUBMODULE", -n, use_count_less_than, use_count_more_than, _filter)
+        return self._get_most_imported_helper("SUBMODULE", -n,
+                                              use_count_less_than,
+                                              use_count_more_than, _filter)
 
-    def get_most_imported_function(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
-        """Get n most imported function within a certain use count range, subject to filter.
+    def get_most_imported_function(self, n=None, use_count_less_than=None,
+                                   use_count_more_than=None, _filter=None):
+        """Get n most imported function within a certain use count range,
+        subject to filter.
 
         Parameters
         ----------
         n : int or None, optional (default=None)
-                the top n least imported function to be returned. If set to None, all results will be returned.
+                the top n least imported function to be returned. If set to
+                None, all results will be returned.
         use_count_less_than : int or None, optional (default=None)
-                only include functions that have use count less than this amount. If none, there will be no restriction.
+                only include functions that have use count less than this
+                amount. If none, there will be no restriction.
         use_count_more_than : int or None, optional (default=None)
-                only include functions that have use count more than this amount. If none, there will be no restriction.
+                only include functions that have use count more than this
+                amount. If none, there will be no restriction.
         _filter : Filter object or None (default=None)
                 Filter the result as defined in the filter object.
 
@@ -292,19 +334,26 @@ list
                 Returns a list of tuple (name, count)
 
         """
-        return self._get_most_imported_helper("FUNCTION", n, use_count_less_than, use_count_more_than, _filter)
+        return self._get_most_imported_helper("FUNCTION", n,
+                                              use_count_less_than,
+                                              use_count_more_than, _filter)
 
-    def get_least_imported_function(self, n=None, use_count_less_than=None, use_count_more_than=None, _filter=None):
-        """Get n least imported function within a certain use count range, subject to filter.
+    def get_least_imported_function(self, n=None, use_count_less_than=None,
+                                    use_count_more_than=None, _filter=None):
+        """Get n least imported function within a certain use count range,
+        subject to filter.
 
         Parameters
         ----------
         n : int or None, optional (default=None)
-                the top n least imported function to be returned. If set to None, all results will be returned.
+                the top n least imported function to be returned. If set to
+                None, all results will be returned.
         use_count_less_than : int or None, optional (default=None)
-                only include functions that have use count less than this amount. If none, there will be no restriction.
+                only include functions that have use count less than this
+                amount. If none, there will be no restriction.
         use_count_more_than : int or None, optional (default=None)
-                only include functions that have use count more than this amount. If none, there will be no restriction.
+                only include functions that have use count more than this
+                amount. If none, there will be no restriction.
         _filter : Filter object or None (default=None)
                 Filter the result as defined in the filter object.
 
@@ -314,7 +363,9 @@ list
                 Returns a list of tuple (name, count)
 
         """
-        return self._get_most_imported_helper("FUNCTION", -n, use_count_less_than, use_count_more_than, _filter)
+        return self._get_most_imported_helper("FUNCTION", -n,
+                                              use_count_less_than,
+                                              use_count_more_than, _filter)
 
     def _get_imported_info(self, n, _filter, accepted_list, ia_to_use, f=None):
         ia = ImportAnalyzer(self.package, accepted_list)
@@ -349,7 +400,9 @@ list
         list
                 Returns a list of BigQueryGithubEntry
         """
-        return self.ia_class.get_source(val) + self.ia_submodule.get_source(val) + self.ia_function.get_source(val)
+        return (self.ia_class.get_source(val)
+                + self.ia_submodule.get_source(val)
+                + self.ia_function.get_source(val))
 
     def set_package(self, package):
         """Reset package name.
@@ -385,7 +438,8 @@ list
         self.limit = limit
 
     def run(self, query):
-        """Run SQL query with Google BigQuery. Allow large results. Timeout set to 99999999.
+        """Run SQL query with Google BigQuery. Allow large results. Timeout set
+        to 99999999.
 
         Parameters
         ----------
@@ -450,7 +504,8 @@ list
         exclude_list = []
         if self.exclude_forks == "auto":
             exclude_list = [self.package]
-        elif type(self.exclude_forks) == list or type(Self.exclude_forks) == tuple:
+        elif (type(self.exclude_forks) == list
+              or type(self.exclude_forks) == tuple):
             exclude_list = list(self.exclude_forks)
         else:
             print("Unsupported exclude_forks!")
@@ -470,8 +525,8 @@ list
         ''' % (self.py_files_all, connect_with_or(*string_builder))
 
         res = self.run(all_forks)
-        excluded_repos = [
-            'NOT REGEXP_CONTAINS(repo_name, "%s")' % repo_name[0] for repo_name in res]
+        excluded_repos = ['NOT REGEXP_CONTAINS(repo_name, "%s")' %
+                          repo_name[0] for repo_name in res]
         return excluded_repos
 
     def _exclude_forks_string_list_standard_sql(self):
@@ -480,7 +535,8 @@ list
         exclude_list = []
         if self.exclude_forks == "auto":
             exclude_list = [self.package]
-        elif type(self.exclude_forks) == list or type(Self.exclude_forks) == tuple:
+        elif (type(self.exclude_forks) == list
+              or type(self.exclude_forks) == tuple):
             exclude_list = list(self.exclude_forks)
         else:
             print("Unsupported exclude_forks!")
@@ -515,7 +571,8 @@ list
         Returns
         -------
         list
-                Returns a list of tuple of (context_string, path, repo_name, count).
+                Returns a list of tuple of (context_string, path, repo_name,
+                count).
 
         """
         return self._get_context_all(class_name)
@@ -531,7 +588,8 @@ list
         Returns
         -------
         dict
-                Returns a nested dict: dict(key=arg, value=dict(key=value_that_arg_sets_to, value=count))
+                Returns a nested dict: dict(key=arg,
+                value=dict(key=value_that_arg_sets_to, value=count))
 
         """
         contexts = self._get_context_all(class_name)

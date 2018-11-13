@@ -11,7 +11,8 @@ from odyssey.utils.parse import parso_parse
 
 
 class ImportAnalyzer:
-    """ImportAnalyzer analyzes how classes, submodules and functions are imported."""
+    """ImportAnalyzer analyzes how classes, submodules and functions are
+    imported."""
 
     def __init__(self, package, accepted_list):
         """Initialize the ImportAnalyzer.
@@ -56,7 +57,8 @@ class ImportAnalyzer:
         Parameters
         ----------
         n : int or None, optional (default=None)
-            the top n most/least imported values to be returned. If set to None, all results will be returned.
+            the top n most/least imported values to be returned. If set to
+            None, all results will be returned.
 
         _reverse : bool, optional (default=True)
             if _reverse, returns value in descending order.
@@ -69,8 +71,10 @@ class ImportAnalyzer:
         """
         output = self._entry_list_to_count()
         if n is None:
-            return sorted(output.items(), key=operator.itemgetter(1), reverse=_reverse)
-        return sorted(output.items(), key=operator.itemgetter(1), reverse=_reverse)[:n]
+            return sorted(output.items(), key=operator.itemgetter(1),
+                          reverse=_reverse)
+        return sorted(output.items(), key=operator.itemgetter(1),
+                      reverse=_reverse)[:n]
 
     def get_source(self, s):
         """Get the source entries for a specific value
@@ -94,7 +98,8 @@ class ImportAnalyzer:
         Parameters
         ----------
         n : int or None, optional (default=None)
-            the top n most imported values to be returned. If set to None, all results will be returned.
+            the top n most imported values to be returned. If set to None, all
+            results will be returned.
 
         Returns
         -------
@@ -110,7 +115,8 @@ class ImportAnalyzer:
         Parameters
         ----------
         n : int or None, optional (default=None)
-            the top n least imported values to be returned. If set to None, all results will be returned.
+            the top n least imported values to be returned. If set to None, all
+            results will be returned.
 
         Returns
         -------
@@ -142,9 +148,9 @@ class ImportAnalyzer:
     def _get_default_accepted_list(self, accepted_list):
         if type(accepted_list) is str:
             if accepted_list.upper() == "SKLEARN_ALL":
-                return (sklearn_meta_data.get_all_functions() +
-                        sklearn_meta_data.get_all_submodules() +
-                        sklearn_meta_data.get_all_models())
+                return (sklearn_meta_data.get_all_functions()
+                        + sklearn_meta_data.get_all_submodules()
+                        + sklearn_meta_data.get_all_models())
             elif accepted_list.upper() == "SKLEARN_FUNCTION":
                 return sklearn_meta_data.get_all_functions()
             elif accepted_list.upper() == "SKLEARN_SUBMODULE":
@@ -152,8 +158,8 @@ class ImportAnalyzer:
             elif accepted_list.upper() == "SKLEARN_CLASS":
                 return sklearn_meta_data.get_all_models()
             else:
-                raise Exception("Do not understand %s! " % accepted_list +
-                                "Default accepted list not supported!")
+                raise Exception("Do not understand %s! " % accepted_list
+                                + "Default accepted list not supported!")
         else:
             return accepted_list
 
@@ -170,26 +176,30 @@ class ImportAnalyzer:
 
     def _count(self, value):
         if value in self.accepted_list:
-            if len(self.counter[value]) == 0 or self.counter[value][-1] != self.entry:
+            if (len(self.counter[value]) == 0
+                    or self.counter[value][-1] != self.entry):
                 # Count by file, so do not count the same value twice
                 self.counter[value].append(self.entry)
 
     def _handle_import_from(self, node):
         def get_imports(node):
-            if isinstance(node.children[3], parso.python.tree.Operator) and node.children[3].value == "(":
+            if (isinstance(node.children[3], parso.python.tree.Operator)
+                    and node.children[3].value == "("):
                 return node.children[4]
             else:
                 return node.children[3]
         module = node.children[1]
         imports = get_imports(node)
-        if module.type == 'dotted_name' and module.children[0].value == self.package:
+        if (module.type == 'dotted_name'
+                and module.children[0].value == self.package):
             # Case 1: from Library.B import C
             for dotted_name in module.children:
                 if dotted_name.type == 'name':
                     self._count(dotted_name.value)
 
-        if ((module.type == 'name' and module.value == self.package) or
-                (module.type == 'dotted_name' and module.children[0].value == self.package)):
+        if ((module.type == 'name' and module.value == self.package)
+                or (module.type == 'dotted_name'
+                    and module.children[0].value == self.package)):
             if imports.type == "name":
                 # Case 2: from Library import A
                 self._count(imports.value)
@@ -214,15 +224,19 @@ class ImportAnalyzer:
 
     def _handle_import_name(self, node):
         imports = node.children[1]
-        if imports.type == 'dotted_name' and imports.children[0].type == "name" and imports.children[0].value == self.package:
+        if (imports.type == 'dotted_name'
+                and imports.children[0].type == "name"
+                and imports.children[0].value == self.package):
             # Case 6: import Library.A
             for child in imports.children[1:]:
                 if child.type == "name":
                     self._count(child.value)
-        elif imports.type == 'dotted_as_name' and imports.children[0].type == "dotted_name":
+        elif (imports.type == 'dotted_as_name'
+              and imports.children[0].type == "dotted_name"):
             # Case 7: import Library.A as B
             import_dot = imports.children[0]
-            if import_dot.children[0].type == "name" and import_dot.children[0].value == self.package:
+            if (import_dot.children[0].type == "name"
+                    and import_dot.children[0].value == self.package):
                 for child in import_dot.children[1:]:
                     if child.type == "name":
                         self._count(child.value)
