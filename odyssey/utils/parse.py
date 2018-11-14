@@ -1,6 +1,6 @@
 from joblib import Memory
 import parso
-memory = Memory(cachedir=".", verbose=0)
+memory = Memory(location=".", verbose=0)
 
 
 @memory.cache

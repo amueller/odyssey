@@ -13,7 +13,7 @@ from google.cloud import bigquery
 
 from joblib import Memory
 
-memory = Memory(cachedir=".", verbose=0)
+memory = Memory(location=".", verbose=0)
 
 
 @memory.cache
@@ -44,7 +44,7 @@ def run_query(query, project):
 class GithubPython:
     """Provides functionality to build SQL query, connect with BigQuery, """
 
-    def __init__(self, package, exclude_forks="auto", limit=None,
+    def __init__(self, package=None, exclude_forks="auto", limit=None,
                  project="odyssey-193217193217",
                  py_files_unique='`Odyssey_github_sklearn.content_py_unique`',
                  py_files_all='`Odyssey_github_sklearn.content_py_full`'):
@@ -432,39 +432,6 @@ class GithubPython:
                 + self.ia_submodule.get_source(val)
                 + self.ia_function.get_source(val))
 
-    def set_package(self, package):
-        """Reset package name.
-
-        Parameters
-        ----------
-        package: string
-                See doc of __init__ for definition of package attribute.
-
-        """
-        self._reset(package)
-
-    def set_exclude_forks(self, exclude_forks):
-        """Reset exclude_forks.
-
-        Parameters
-        ----------
-        exclude_forks: list or None
-                See doc of __init__ for definition of exclude_forks attribute.
-
-        """
-        self.set_exclude_forks = exclude_forks
-
-    def set_limit(self, limit):
-        """Reset limit.
-
-        Parameters
-        ----------
-        limit: int
-                See doc of __init__ for definition of limit attribute.
-
-        """
-        self.limit = limit
-
     def run(self, query):
         """Run SQL query with Google BigQuery. Allow large results. Timeout set
         to 99999999.
@@ -525,6 +492,8 @@ class GithubPython:
             return ""
         exclude_list = []
         if self.exclude_forks == "auto":
+            if self.package is None or self.package == "":
+                raise ValueError("Need to set package to exclude forks")
             exclude_list = [self.package]
         elif (type(self.exclude_forks) == list
               or type(self.exclude_forks) == tuple):
