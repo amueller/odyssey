@@ -9,15 +9,42 @@ from odyssey.utils.query_builder import connect_with_and, connect_with_or
 from odyssey.core.analyzer import (RepoImportCounter, ImportAnalyzer,
                                    InstantiationAnalyzer)
 from odyssey.core.bigquery.BigQueryGithubEntry import BigQueryGithubEntry
+from google.cloud import bigquery
+
 from joblib import Memory
 
 memory = Memory(cachedir=".", verbose=0)
 
 
+@memory.cache
+def run_query(query, project):
+    """Run SQL query with Google BigQuery. Allow large results. Timeout set
+    to 99999999.
+
+    Parameters
+    ----------
+    query: string
+            SQL query to be executed.
+
+
+    Returns
+    -------
+    list
+            Returns result in python list.
+
+    """
+    job_config = bigquery.QueryJobConfig()
+    client = bigquery.Client(project=project)
+    result = client.query(query, job_config=job_config)
+    job_config.allowLargeResults = True
+    result.__done_timeout = 99999999
+    return result.result().to_dataframe()
+
+
 class GithubPython:
     """Provides functionality to build SQL query, connect with BigQuery, """
 
-    def __init__(self, package="", exclude_forks="auto", limit=None,
+    def __init__(self, package, exclude_forks="auto", limit=None,
                  project="odyssey-193217193217",
                  py_files_unique='`Odyssey_github_sklearn.content_py_unique`',
                  py_files_all='`Odyssey_github_sklearn.content_py_full`'):
@@ -85,12 +112,13 @@ class GithubPython:
                 Filter the result as defined in the filter object.
 
         Returns
--------
-list
-    Returns a list of BigQueryGithubEntry object
+        -------
+        list
+            Returns a list of BigQueryGithubEntry object
 
         """
         res = self.run(self._get_all_query(_filter))
+        #FIXME
         return [BigQueryGithubEntry(_id, code, repo_name, path)
                 for _id, code, repo_name, path in res]
 
@@ -103,12 +131,12 @@ list
                 Filter the result as defined in the filter object.
 
         Returns
--------
-int
-    Returns an integer for count.
+        -------
+        int
+            Returns an integer for count.
 
         """
-        return self.run(self._get_count_query(_filter))[0][0]
+        return self.run(self._get_count_query(_filter))['f0_'][0]
 
     def get_top_import_repo(self, n=None, _filter=None):
         """Get top imported repo. See RepoImportCounter for details.
@@ -120,9 +148,9 @@ int
                 None, all results will be returned.
 
         Returns
--------
-list
-    Returns a list of repo name.
+        -------
+        list
+            Returns a list of repo name.
 
         """
         entries = self.get_all(_filter)
@@ -453,13 +481,7 @@ list
                 Returns result in python list.
 
         """
-        from google.cloud import bigquery
-        job_config = bigquery.QueryJobConfig()
-        client = bigquery.Client(project=self.project)
-        result = client.query(query, job_config=job_config)
-        job_config.allowLargeResults = True
-        result.__done_timeout = 99999999
-        return list(result)
+        return run_query(query, self.project)
 
     def _get_query(self, select, _filter=None):
         where_clause = ""
@@ -525,8 +547,8 @@ list
         ''' % (self.py_files_all, connect_with_or(*string_builder))
 
         res = self.run(all_forks)
-        excluded_repos = ['NOT REGEXP_CONTAINS(repo_name, "%s")' %
-                          repo_name[0] for repo_name in res]
+        excluded_repos = ["STRPOS(repo_name, '%s') = 0" % repo_name
+                          for repo_name in res['repo_name']]
         return excluded_repos
 
     def _exclude_forks_string_list_standard_sql(self):
@@ -554,10 +576,9 @@ list
         WHERE
             %s
         ''' % (self.py_files_all, connect_with_or(*string_builder))
-
         res = self.run(all_forks)
-        excluded_repos = ["STRPOS(repo_name, '%s') = 0" % repo_name[0]
-                          for repo_name in res]
+        excluded_repos = ["STRPOS(repo_name, '%s') = 0" % repo_name
+                          for repo_name in res['repo_name']]
         return excluded_repos
 
     def get_context(self, class_name):
@@ -594,6 +615,7 @@ list
         """
         contexts = self._get_context_all(class_name)
         analyzer = InstantiationAnalyzer(class_name)
+        #FIXME
         for i in range(1, len(contexts)):
             code = contexts[i][0]
             analyzer.parse(code)
@@ -639,14 +661,14 @@ list
         parsePythonFile2(content,repo_name) repo_name,
         count(*) count
         FROM
-        `Odyssey_github_sklearn.content_py_unique`
+        `%s`
         WHERE
          %s
         GROUP BY
         1,2,3
         ORDER BY
         count DESC
-        ''' % (class_name, class_name, connect_with_and(
+        ''' % (class_name, class_name, self.py_files_unique, connect_with_and(
             self._contains_package_string_standard_sql(),
             *self._exclude_forks_string_list_standard_sql()
         )) + limit_clause
