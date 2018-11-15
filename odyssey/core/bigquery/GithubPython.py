@@ -118,9 +118,8 @@ class GithubPython:
 
         """
         res = self.run(self._get_all_query(_filter))
-        #FIXME
         return [BigQueryGithubEntry(_id, code, repo_name, path)
-                for _id, code, repo_name, path in res]
+                for _, (_id, code, repo_name, path) in res.iterrows()]
 
     def get_count(self, _filter=None):
         """Get count of files subject to filter.
