@@ -44,7 +44,7 @@ def run_query(query, project):
 class GithubPython:
     """Provides functionality to build SQL query, connect with BigQuery, """
 
-    def __init__(self, package=None, exclude_forks="auto", limit=None,
+    def __init__(self, package="", exclude_forks="auto", limit=None,
                  project="odyssey-193217193217",
                  py_files_unique='`Odyssey_github_sklearn.content_py_unique`',
                  py_files_all='`Odyssey_github_sklearn.content_py_full`'):
